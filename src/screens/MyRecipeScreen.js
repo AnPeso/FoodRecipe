@@ -43,7 +43,7 @@ import {
       const deleterecipe = async (index) => {
         try {
           const updatedrecipes = [...recipes];
-          updatedrecipes.splice(index, 1); // Remove article from array
+          updatedrecipes.splice(index, 1); 
           await AsyncStorage.setItem("customrecipes", JSON.stringify(updatedrecipes)); // Update AsyncStorage
           setrecipes(updatedrecipes); // Update state
         } catch (error) {
