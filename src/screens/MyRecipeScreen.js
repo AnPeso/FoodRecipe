@@ -1,3 +1,4 @@
+
 import {
     View,
     Text,
@@ -76,24 +77,25 @@ import {
               recipes.map((recipe, index) => (
                 <View key={index} style={styles.recipeCard} testID="recipeCard">
                   <TouchableOpacity testID="handlerecipeBtn" onPress={() => handlerecipeClick(recipe)}>
-                  {recipe.recipeImage && (
+                  {recipe.image && (
                     <Image
-                      source={{ uri: recipe.recipeImage }}
-                      style={styles.articleImage}
+                      source={{ uri: recipe.image }}
+                      style={styles.recipeImage}
                     />
                   )}
                     <Text style={styles.recipeTitle}>{recipe.title}</Text>
                     <Text style={styles.recipeDescription} testID="recipeDescp">
-                    {recipe.recipeInsturctions?.substring(0, 50) + "..."}
+                    {recipe.description?.substring(0, 50) + "..."}
                     </Text>
                   </TouchableOpacity>
   
                   {/* Edit and Delete Buttons */}
                   <View style={styles.actionButtonsContainer} testID="editDeleteButtons">
                   <TouchableOpacity
-                    onPress={() => editrecipe(article, index)}
-                    style={styles.editButton} onPress={() => handlerecipeClick(recipe)}
-                  >
+                 onPress={() => editrecipe(recipe, index)} 
+                  style={styles.editButton}
+                    >
+
                     <Text style={styles.editButtonText}>Edit</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
@@ -215,4 +217,7 @@ import {
       fontSize: hp(1.8),
     },
   });
+  
+
+
   
