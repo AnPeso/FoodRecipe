@@ -1,31 +1,33 @@
-import { View,Text,TextInput,TouchableOpacity,Image,StyleSheet,} from "react-native";
+import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet } from "react-native";
 import React, { useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {widthPercentageToDP as wp,heightPercentageToDP as hp,} from "react-native-responsive-screen";
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
 
 export default function RecipesFormScreen({ route, navigation }) {
-  const { recipeToEdit, recipeIndex, onrecipeEdited } = route.params || {};
+  const { recipeToEdit, recipeIndex, onrecipeEdited } = route.params || {}; // onrecipeEdited parameter to notify MyRecipeScreen
   const [title, setTitle] = useState(recipeToEdit ? recipeToEdit.title : "");
   const [image, setImage] = useState(recipeToEdit ? recipeToEdit.image : "");
-  const [description, setDescription] = useState(
-    recipeToEdit ? recipeToEdit.description : ""
-  );
+  const [description, setDescription] = useState(recipeToEdit ? recipeToEdit.description : "");
 
-  const saverecipe = async () => {
-    const newrecipe = { title, image, description };
+  const saveRecipe = async () => {
+    const newRecipe = { title, image, description };
     try {
       const existingRecipes = await AsyncStorage.getItem("customrecipes");
       const recipes = existingRecipes ? JSON.parse(existingRecipes) : [];
-      // If editing an article, update it; otherwise, add a new one
+
+      // If editing an existing recipe, update it; otherwise, add a new one
       if (recipeToEdit !== undefined) {
-        recipes[recipeIndex] = newrecipe;
+        recipes[recipeIndex] = newRecipe;
         await AsyncStorage.setItem("customrecipes", JSON.stringify(recipes));
-        if (onrecipeEdited) onrecipeEdited(); // Notify the edit
+        if (onrecipeEdited) onrecipeEdited(); // Notify the parent component that recipe has been edited
       } else {
-        recipes.push(newrecipe); // Add new article
+        recipes.push(newRecipe); // Add new recipe
         await AsyncStorage.setItem("customrecipes", JSON.stringify(recipes));
+        if (onrecipeEdited) onrecipeEdited(); // Notify the parent component that new recipe has been added
       }
-      navigation.goBack(); // Return to the previous screen
+
+      // After saving, go back to the previous screen
+      navigation.goBack();
     } catch (error) {
       console.error("Error saving the recipe:", error);
     }
@@ -58,7 +60,7 @@ export default function RecipesFormScreen({ route, navigation }) {
         numberOfLines={4}
         style={[styles.input, { height: hp(20), textAlignVertical: "top" }]}
       />
-      <TouchableOpacity onPress={saverecipe} style={styles.saveButton}>
+      <TouchableOpacity onPress={saveRecipe} style={styles.saveButton}>
         <Text style={styles.saveButtonText}>Save recipe</Text>
       </TouchableOpacity>
     </View>
@@ -74,12 +76,12 @@ const styles = StyleSheet.create({
     marginTop: hp(4),
     borderWidth: 1,
     borderColor: "#ddd",
-    padding: wp(.5),
+    padding: wp(1),
     marginVertical: hp(1),
   },
   image: {
     width: 300,
-    height:200,
+    height: 200,
     margin: wp(2),
   },
   imagePlaceholder: {
@@ -94,7 +96,7 @@ const styles = StyleSheet.create({
   },
   saveButton: {
     backgroundColor: "#4F75FF",
-    padding: wp(.5),
+    padding: wp(1),
     alignItems: "center",
     borderRadius: 5,
     marginTop: hp(2),
