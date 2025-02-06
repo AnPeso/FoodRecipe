@@ -32,20 +32,21 @@ export default function MyRecipeScreen() {
         fetchRecipes();
     }, []);
 
-    // Function to handle saving a new recipe
-    const handleAddRecipe = async (newRecipe) => {
-        // Update the recipes state first
-        const updatedRecipes = [...recipes, newRecipe];
-        setRecipes(updatedRecipes);
+    // Callback to refresh the page after adding or editing a recipe
+    const handleRecipeUpdated = () => {
+        const fetchRecipes = async () => {
+            const storedRecipes = await AsyncStorage.getItem("customrecipes");
+            if (storedRecipes) {
+                setRecipes(JSON.parse(storedRecipes));
+            }
+        };
 
-        // Then save the updated recipes to AsyncStorage
-        try {
-            await AsyncStorage.setItem("customrecipes", JSON.stringify(updatedRecipes));
-            // After saving, navigate back to MyRecipeScreen
-            navigation.goBack();
-        } catch (error) {
-            console.error("Error saving recipe to AsyncStorage:", error);
-        }
+        fetchRecipes();
+    };
+
+    // Navigate to the RecipesFormScreen with the onrecipeEdited callback
+    const handleAddRecipe = () => {
+        navigation.navigate("RecipesFormScreen", { onrecipeEdited: handleRecipeUpdated });
     };
 
     const handleRecipeClick = (recipe) => {
@@ -56,7 +57,7 @@ export default function MyRecipeScreen() {
         try {
             const updatedRecipes = [...recipes];
             updatedRecipes.splice(index, 1);
-            await AsyncStorage.setItem("customrecipes", JSON.stringify(updatedRecipes)); // Update AsyncStorage
+            await AsyncStorage.setItem("customrecipes", JSON.stringify(updatedRecipes));
             setRecipes(updatedRecipes); // Update state
         } catch (error) {
             console.error("Error deleting the recipe:", error);
@@ -64,7 +65,7 @@ export default function MyRecipeScreen() {
     };
 
     const editRecipe = (recipe, index) => {
-        navigation.navigate("RecipesFormScreen", { recipeToEdit: recipe, recipeIndex: index });
+        navigation.navigate("RecipesFormScreen", { recipeToEdit: recipe, recipeIndex: index, onrecipeEdited: handleRecipeUpdated });
     };
 
     return (
@@ -74,7 +75,7 @@ export default function MyRecipeScreen() {
                 <Text style={styles.backButtonText}>{"Back"}</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => navigation.navigate("RecipesFormScreen", { onSave: handleAddRecipe })} style={styles.addButton}>
+            <TouchableOpacity onPress={handleAddRecipe} style={styles.addButton}>
                 <Text style={styles.addButtonText}>Add New recipe</Text>
             </TouchableOpacity>
 
@@ -137,7 +138,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         borderRadius: 5,
-        width: wp(80), // 80% of screen width
+        width: wp(80),
         marginTop: hp(2),
     },
     addButtonText: {
@@ -160,8 +161,8 @@ const styles = StyleSheet.create({
         marginTop: hp(5),
     },
     recipeCard: {
-        width: wp(85), // Responsive card width
-        height: hp(30), // Responsive card height
+        width: wp(85),
+        height: hp(30),
         backgroundColor: "#fff",
         padding: wp(3),
         borderRadius: 8,
