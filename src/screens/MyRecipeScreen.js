@@ -129,14 +129,14 @@ import {
       color: "#4F75FF",
     },
     addButton: {
-      backgroundColor: "#4F75FF",
-      padding: wp(.7),
-      alignItems: "center",
-      borderRadius: 5,
-      width:300,
-     marginLeft:500
-      // marginBottom: hp(2),
-    },
+  backgroundColor: "#4F75FF",
+  padding: wp(2), // Adjust padding for a more balanced button
+  alignItems: "center",
+  justifyContent: "center",
+  borderRadius: 5,
+  width: wp(80),  // Use 80% of the screen width
+  marginTop: hp(2), // Add some space from the top
+},
     addButtonText: {
       color: "#fff",
       fontWeight: "600",
